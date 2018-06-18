@@ -24,9 +24,15 @@
     <ClCompile Include="stm_testing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Dcp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Diffeq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dcp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

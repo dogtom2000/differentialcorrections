@@ -131,11 +131,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Dcp.cpp" />
     <ClCompile Include="Diffeq.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stm_testing.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Dcp.h" />
     <ClInclude Include="Diffeq.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,22 +1,45 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <vector>
+#include <Eigen/Dense>
 #include "Ode.h"
 #include "Diffeq.h"
-#include <Eigen/Dense>
+#include "Dcp.h"
 
 #define PI 3.14159265358979323846264338328
+
+void calculate_target(double &x, double&y, double phi)
+{
+	//double moonx = 53.40297;
+	//double moony = 27.93549;
+	double moonx = 50.2257;
+	double moony = 33.3113;
+	double moonr = 60.26830685;
+	double soi = 10.4;
+
+	double temp1 = moonx * std::cos(phi) - moony * std::sin(phi);
+	double temp2 = moony * std::cos(phi) + moonx * std::sin(phi);
+
+	x = soi * temp1 / moonr + moonx;
+	y = soi * temp2 / moonr + moony;
+}
 
 int main()
 {
 	// time unit: 801.893982496276 seconds
 	// distance unit: 6378145 meters
 
+	double xcoord;
+	double ycoord;
+
+	calculate_target(xcoord, ycoord, 1.965 + 0.29);
+
 	const int neqn = 48;
 	double t = 0;
-	double tout = 225.5 / 30;
+	double tout = 274;
 	double relerr = 0;
-	double abserr = 2e-10;
+	double abserr = 1e-8;
 	double work_reference[neqn * 22];
 
 	Eigen::VectorXd state_vector(6);
@@ -36,9 +59,12 @@ int main()
 	};
 
 	Ode moon_trajectory(diffeq::stm3b, neqn, y, t, tout, relerr, abserr, work_reference);
-	moon_trajectory.maxnum = 100000;
-	moon_trajectory.step();
 
+	std::vector<double> target_position = { xcoord, ycoord, 0};
+
+	Dcp dcp(moon_trajectory, target_position);
+	dcp.seek_target();
+	dcp.print_solution();
 
 	//Eigen::VectorXd target_position(3);
 	//target_position << 43.01, 28.37, 0;
@@ -68,9 +94,6 @@ int main()
 
 	//x_vector = df.fullPivLu().solve(b_vector);
 
-	//std::cout << '\n' << x_vector << '\n';
-	//std::cout << '\n' << current_position << '\n';
-	//std::cout << '\n' << target_position << '\n';
 
 
 
@@ -110,32 +133,32 @@ int main()
 
 
 
-	std::cout << std::fixed;
-	std::cout << std::setprecision(5);
-	//std::cout << moon_trajectory.iflag;
-	//std::cout << '\n';
-	//std::cout << moon_trajectory.nostep;
-	//std::cout << '\n';
-	//std::cout << '\n';
+
+	//std::cout << std::fixed;
+	//std::cout << std::setprecision(5);
+	////std::cout << moon_trajectory.iflag;
+	////std::cout << '\n';
+	////std::cout << moon_trajectory.nostep;
+	////std::cout << '\n';
+	////std::cout << '\n';
 
 
-	for (size_t run = 0; run < 61; run++)
-	{
-		
+	//for (size_t run = 0; run < 61; run++)
+	//{
+	//	
 
 
-		for (int i = 0; i < 2; i++)
-		{
-			for (int j = 0; j < 6; j++)
-			{
-				std::cout << std::setw(8) << std::setfill(' ') << moon_trajectory.y[6 * i + j] << " ";
-			}
-			std::cout << '\n';
-		}
-		std::cout << '\n';
-		moon_trajectory.tout += 225.5 / 30;
-		moon_trajectory.step();
-	}
-	getchar();
+	//	for (int i = 0; i < 2; i++)
+	//	{
+	//		for (int j = 0; j < 6; j++)
+	//		{
+	//			std::cout << std::setw(8) << std::setfill(' ') << moon_trajectory.y[6 * i + j] << " ";
+	//		}
+	//		std::cout << '\n';
+	//	}
+	//	std::cout << '\n';
+	//	moon_trajectory.tout += 225.5 / 30;
+	//	moon_trajectory.step();
+	//}
 	return 0;
 }
